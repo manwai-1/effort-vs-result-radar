@@ -1,6 +1,12 @@
 from datetime import date, datetime, timezone
 
-from scanner.ledger import append_anomalies, apply_backfill, backfill_record, summarize
+from scanner.ledger import (
+    append_anomalies,
+    apply_backfill,
+    backfill_record,
+    finalize_completed_session,
+    summarize,
+)
 from scanner.models import Bar
 from scanner.tags import STALEMATE_HIT_RATE_LABEL
 
@@ -122,6 +128,64 @@ def test_empty_summary_has_three_tags_and_null_averages():
     assert summary[0]["t_plus_3"]["average_return_pct"] is None
     assert summary[0]["t_plus_3"]["hit_rate_pct"] is None
     assert summary[2]["t_plus_10"]["hit_rate_label"] == "不適用"
+
+
+def test_finalize_replaces_same_day_metrics_and_keeps_other_rows():
+    records: list[dict] = []
+    append_anomalies(records, [_anomaly("AAA", "2026-11-26", 90.0), _anomaly("AAA", "2026-11-27", 100.0)])
+    records[1]["t_plus_3_return_pct"] = 1.5
+    completed = _anomaly("AAA", "2026-11-27", 110.0, "seller_distribution")
+    completed["rvol"] = 4.0
+    completed["displacement"] = 0.2
+    completed["anomaly_score"] = 20.0
+    replaced, added, removed = finalize_completed_session(
+        records,
+        [completed],
+        {"AAA"},
+        "US",
+        "2026-11-27",
+    )
+    assert (replaced, added, removed) == (1, 0, 0)
+    prior = next(row for row in records if row["date"] == "2026-11-26")
+    current = next(row for row in records if row["date"] == "2026-11-27")
+    assert prior["signal_price"] == 90.0
+    assert prior["bargaining_power"] == "buyer_absorption"
+    assert current["signal_price"] == 110.0
+    assert current["rvol"] == 4.0
+    assert current["displacement"] == 0.2
+    assert current["anomaly_score"] == 20.0
+    assert current["bargaining_power"] == "seller_distribution"
+    assert current["bargaining_power_label_en"] == "Seller Distribution"
+    assert current["bargaining_power_label_zh"] == "賣方暗中出貨"
+    assert current["t_plus_3_return_pct"] == 1.5
+    assert current["t_plus_5_return_pct"] is None
+
+
+def test_finalize_appends_or_removes_and_ignores_an_unmeasured_name():
+    records: list[dict] = []
+    append_anomalies(
+        records,
+        [
+            _anomaly("KEEP", "2026-11-27", 50.0),
+            _anomaly("DROP", "2026-11-27", 80.0),
+            _anomaly("OTHER", "2026-11-26", 70.0),
+        ],
+    )
+    completed = _anomaly("NEW", "2026-11-27", 110.0)
+    replaced, added, removed = finalize_completed_session(
+        records,
+        [completed],
+        {"DROP", "NEW"},
+        "US",
+        "2026-11-27",
+    )
+    assert (replaced, added, removed) == (0, 1, 1)
+    by_key = {(row["date"], row["ticker"]): row for row in records}
+    assert by_key[("2026-11-27", "KEEP")]["signal_price"] == 50.0
+    assert ("2026-11-27", "DROP") not in by_key
+    assert by_key[("2026-11-26", "OTHER")]["signal_price"] == 70.0
+    assert by_key[("2026-11-27", "NEW")]["signal_price"] == 110.0
+    assert by_key[("2026-11-27", "NEW")]["t_plus_10_return_pct"] is None
 
 
 def test_apply_backfill_only_touches_rows_with_bars():

@@ -1,8 +1,19 @@
-"""Append-only anomaly ledger, T+N backfill, and summary_by_tag.
+"""Anomaly ledger, T+N backfill, and summary_by_tag.
 
-Dedup key is (session date, ticker). The first flag of that session is kept.
-Later scans do not overwrite signal price, RVOL, displacement, score, or tag.
-Only a still-null T+N return is filled, and a filled return is not revised.
+Dedup key is (session date, ticker).
+
+While a market's session is still open, the first flag of that session is
+kept. A later intraday scan does not overwrite signal price, RVOL,
+displacement, score, or tag, and it does not delete the row if the name
+stops looking like an anomaly.
+
+The post-close run of that market replaces those same-day fields with the
+completed session. signal_price becomes the official close and RVOL uses
+the full-day volume. The tag is replaced with the completed session's tag.
+A filled T+N return is not cleared or revised. If the completed session is
+not an anomaly, the same-day partial row is removed so it cannot lock a
+flag. Rows from other dates are not rewritten. Only a still-null T+N return
+is filled, and a filled return is not revised.
 
 T+N is N sessions present in that ticker's daily bars after the signal
 session, not N calendar days. A weekend or a missing session is not invented.
@@ -152,8 +163,43 @@ def backfill_record(record: dict[str, Any], bars: list[Bar], now: datetime) -> b
     return changed
 
 
+_FINAL_FIELDS = (
+    "signal_price",
+    "currency",
+    "rvol",
+    "displacement",
+    "anomaly_score",
+    "bargaining_power",
+    "bargaining_power_label_en",
+    "bargaining_power_label_zh",
+)
+
+
+def _new_row(anomaly: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "date": anomaly["date"],
+        "ticker": anomaly["ticker"],
+        "market": anomaly["market"],
+        "signal_price": anomaly["signal_price"],
+        "currency": anomaly["currency"],
+        "rvol": anomaly["rvol"],
+        "displacement": anomaly["displacement"],
+        "anomaly_score": anomaly["anomaly_score"],
+        "bargaining_power": anomaly["bargaining_power"],
+        "bargaining_power_label_en": anomaly["bargaining_power_label_en"],
+        "bargaining_power_label_zh": anomaly["bargaining_power_label_zh"],
+        "t_plus_3_return_pct": None,
+        "t_plus_5_return_pct": None,
+        "t_plus_10_return_pct": None,
+    }
+
+
 def append_anomalies(records: list[dict[str, Any]], anomalies: list[dict[str, Any]]) -> int:
-    """Append first-seen (date, ticker) rows. Return how many were added."""
+    """Append first-seen (date, ticker) rows. Return how many were added.
+
+    This is the intraday rule. An existing same-day row is left as it is,
+    including a partial close. Post-close replacement is finalize_completed_session.
+    """
 
     seen = {(row["date"], row["ticker"]) for row in records}
     added = 0
@@ -162,26 +208,74 @@ def append_anomalies(records: list[dict[str, Any]], anomalies: list[dict[str, An
         key = (anomaly["date"], anomaly["ticker"])
         if key in seen:
             continue
-        row = {
-            "date": anomaly["date"],
-            "ticker": anomaly["ticker"],
-            "market": anomaly["market"],
-            "signal_price": anomaly["signal_price"],
-            "currency": anomaly["currency"],
-            "rvol": anomaly["rvol"],
-            "displacement": anomaly["displacement"],
-            "anomaly_score": anomaly["anomaly_score"],
-            "bargaining_power": anomaly["bargaining_power"],
-            "bargaining_power_label_en": anomaly["bargaining_power_label_en"],
-            "bargaining_power_label_zh": anomaly["bargaining_power_label_zh"],
-            "t_plus_3_return_pct": None,
-            "t_plus_5_return_pct": None,
-            "t_plus_10_return_pct": None,
-        }
-        records.append(row)
+        records.append(_new_row(anomaly))
         seen.add(key)
         added += 1
     return added
+
+
+def finalize_completed_session(
+    records: list[dict[str, Any]],
+    anomalies: list[dict[str, Any]],
+    measured_tickers: set[str],
+    market: str,
+    session_date: str,
+) -> tuple[int, int, int]:
+    """Replace same-day rows for one market's completed session.
+
+    `measured_tickers` are names that have a real bar on `session_date`.
+    A measured anomaly replaces `signal_price`, RVOL, displacement, score,
+    tag, and labels, and keeps any T+N returns already stored. If no row
+    exists, the completed anomaly is appended. A measured name that is not
+    an anomaly loses its same-day row, so a partial bar cannot lock a flag.
+    Other dates, other markets, and tickers with no bar on this session are
+    unchanged.
+
+    Returns (replaced, added, removed).
+    """
+
+    if not measured_tickers:
+        return (0, 0, 0)
+    anomaly_by_ticker = {
+        row["ticker"]: row
+        for row in anomalies
+        if row.get("market") == market
+        and row.get("date") == session_date
+        and row.get("ticker") in measured_tickers
+    }
+    replaced = 0
+    removed = 0
+    seen: set[str] = set()
+    kept: list[dict[str, Any]] = []
+    for record in records:
+        same_session = (
+            record.get("market") == market
+            and record.get("date") == session_date
+            and record.get("ticker") in measured_tickers
+        )
+        if not same_session:
+            kept.append(record)
+            continue
+        ticker = str(record["ticker"])
+        seen.add(ticker)
+        anomaly = anomaly_by_ticker.get(ticker)
+        if anomaly is None:
+            removed += 1
+            continue
+        for field in _FINAL_FIELDS:
+            record[field] = anomaly[field]
+        kept.append(record)
+        replaced += 1
+    records.clear()
+    records.extend(kept)
+    added_rows: list[dict[str, Any]] = []
+    for ticker in sorted(anomaly_by_ticker):
+        if ticker in seen:
+            continue
+        added_rows.append(_new_row(anomaly_by_ticker[ticker]))
+    added_rows.sort(key=lambda row: (row["date"], row["market"], row["ticker"]))
+    records.extend(added_rows)
+    return (replaced, len(added_rows), removed)
 
 
 def apply_backfill(

@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any
 
 from scanner.formulas import measure
-from scanner.hours import market_local
+from scanner.hours import session_date_ceiling
 from scanner.models import CURRENCIES, MIN_BASELINE_BARS, Bar
 from scanner.run_time import isoformat_offset
 from scanner.tags import assign_tag
@@ -37,7 +37,7 @@ def build_points(
         if not bars:
             skipped.append(f"{ticker}: no bars")
             continue
-        today = market_local(now, market).date()
+        today = session_date_ceiling(now, market)
         selected = select_measurement(bars, today)
         if selected is None:
             skipped.append(f"{ticker}: fewer than {MIN_BASELINE_BARS + 1} sessions on or before {today}")
@@ -108,7 +108,7 @@ def measurement_dates(
         bars = bars_by_ticker.get(symbol["ticker"])
         if not bars:
             continue
-        selected = select_measurement(bars, market_local(now, symbol["market"]).date())
+        selected = select_measurement(bars, session_date_ceiling(now, symbol["market"]))
         if selected is None:
             continue
         dates[symbol["ticker"]] = selected[0].date.isoformat()
