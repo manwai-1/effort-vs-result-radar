@@ -34,9 +34,6 @@ function pointDomId(ticker: string): string {
   return `radar-point-${ticker.replace(/[^A-Za-z0-9_-]/g, "_")}`
 }
 
-function emphasized(point: RadarPoint, tags: TagKey[]): boolean {
-  return anomalyInLeaderboard(point, "all", tags)
-}
 
 export function ScatterPlot({
   points,
@@ -138,7 +135,7 @@ export function ScatterPlot({
           </p>
           {size.width > 0 && size.height > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
-              <ScatterChart margin={MARGIN}>
+              <ScatterChart accessibilityLayer={false} tabIndex={-1} margin={MARGIN}>
                 <CartesianGrid stroke="#2A3140" strokeWidth={1} />
                 <XAxis
                   type="number"
@@ -227,7 +224,7 @@ export function ScatterPlot({
                     }
                     const point = props.payload
                     if (!point?.ticker || point.anchor || props.cx == null || props.cy == null) return <g />
-                    const hot = emphasized(point, tags)
+                    const hot = point.is_anomaly
                     const radius = hot ? 4 : 2
                     const marked =
                       point.ticker === activeTicker || point.ticker === selectedTicker

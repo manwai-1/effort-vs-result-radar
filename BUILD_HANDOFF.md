@@ -5,7 +5,8 @@
 - PR: https://github.com/manwai-1/effort-vs-result-radar/pull/2
 - Branch: `cursor/product-ui-7260`
 - Product commit: `f9cd47bee5e2baaffbafd7e40afd875af1456131`
-- Head SHA: the tip of `cursor/product-ui-7260` after this handoff update
+- Vetoed SHA: `43939add450407b50e5fddc40098f1d9a2afc781`
+- Head SHA: the tip of `cursor/product-ui-7260` that contains this fix-round section
 - Starting SHA: `f1121faaf55cb2d71b0f20156f9489ae43b2aad9`
 - Scanner PR: https://github.com/manwai-1/effort-vs-result-radar/pull/1
 - Base of that PR: `main` at `41f6ac5a5f540fd6fc35c2266612fefbf9d63ae1`
@@ -98,3 +99,56 @@ Populated, stale, and error checks used labeled JSON under `/tmp/qa-fixtures`. T
 - `font-mono` falls through to Noto Sans TC so Chinese in formulas is not tofu. IBM Plex Sans, Noto Sans TC, and IBM Plex Mono are self-hosted by `next/font`.
 - `tests/test_public_data.py` now keeps UI files out of the scanner package and expects `app/page.tsx`. Scanner behavior tests are unchanged.
 - Desktop leaderboard sort icons sit under the column label so the header words stay inside the column.
+
+## Fix round 1
+
+Independent QA vetoed `43939add450407b50e5fddc40098f1d9a2afc781`. This commit fixes only QA-1 and QA-2. Scanner SHA `f1121faaf55cb2d71b0f20156f9489ae43b2aad9` was still the tip of `cursor/scanner-data-contract-7fee` and PR #1. It was not moved.
+
+### QA-1
+
+Anomaly glyphs follow `is_anomaly`, not the tag filter. An 8px `#E8B849` point with a 1px `#12161C` stroke stays that way while it is plotted. Tag filters remove tagged rows from the leaderboard only. A null `bargaining_power` anomaly stays on the market-filtered leaderboard, is not labelled `未標記`, and is not given an invented tag. `未標記` is only for a non-anomaly. A missing label on a known `bargaining_power` still comes from the shared label table.
+
+### QA-2
+
+The open Live Radar tab panel is `tabindex="-1"`, so it is not a tab stop. The Recharts surface is `accessibilityLayer={false}` and `tabIndex={-1}`, so it is not a second chart stop. The chart `div[role=application]` remains the keyboard stop and keeps the 2px `#E8B849` ring with a 2px `#12161C` offset. Its name is still `Live Radar scatter, X RVOL / Effort, Y Displacement / Result`.
+
+### Commands on this round
+
+| Command | Result |
+| --- | --- |
+| `npm test` | 14 passed |
+| `npm run lint` | passed |
+| `npm run build` | passed |
+| `python3 -m pytest` | 37 passed |
+
+### Browser
+
+`http://127.0.0.1:3000` from `next start --hostname 127.0.0.1 --port 3000`. Loopback only. Device scale 1.
+
+| Viewport | `innerWidth` × `innerHeight` | `scrollWidth` ≤ `clientWidth` |
+| --- | --- | --- |
+| Empty Live Radar | 1440×1000 and 390×844 | yes, both |
+| Populated Live Radar and Track Record | 1440×1100 and 390×844 | yes, both |
+
+Empty fixture still shows `最近掃描：時間未有提供`, no `1970`, and no 72-hour notice. No page errors on those loads. No images. Color classes were not changed; the earlier pairs still apply (title 16.09:1, timestamp 7.13:1, selected tab 10.81:1, footer 7.84:1).
+
+QA-1, measured on the visible glyph circle: `NULLTAG` with all tags selected is `r=4`, fill `#E8B849`, stroke `#12161C`, stroke width 1, accessible name without `未標記`, and it is on the leaderboard. After Seller Distribution is turned off, `0005.HK` keeps that same glyph and leaves the leaderboard. `NULLTAG` stays listed.
+
+QA-2, Tab from the header through filters and tabs at 1440 and 390: `重新整理`, `計算方法`, `全部`, the first tag, `Live Radar`, then the chart div. Each of those stops has a box-shadow containing `rgb(232, 184, 73)`. The tab panel is `tabindex="-1"`. The chart svg is `tabindex="-1"` and is not in that sequence.
+
+Screenshots:
+
+- `/opt/cursor/artifacts/evr-qa/fix1/empty-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/empty-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/empty-record-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/empty-record-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/qa1-all-tags-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/qa1-seller-off-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/qa1-all-tags-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/qa1-seller-off-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/record-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/record-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/focus-chart-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix1/dialog-1440.png`
+
+This round is a candidate for a fresh audit. It is not a STATUS: PASS and it is not permission to merge.

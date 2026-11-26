@@ -131,10 +131,10 @@ export function RadarApp() {
       : null
 
   const leaderboardEmpty =
-    tags.length === 0
-      ? COPY.tagsOff
-      : anomalies.length > 0
-        ? null
+    anomalies.length > 0
+      ? null
+      : tags.length === 0
+        ? COPY.tagsOff
         : points.some((point) => point.is_anomaly)
           ? COPY.filterEmpty
           : COPY.noAnomalies

@@ -307,9 +307,7 @@ function RecordBlock({
           </span>
           {labels.en && labels.zh && row.bargaining_power ? (
             <TagBadge tag={row.bargaining_power} en={labels.en} zh={labels.zh} />
-          ) : (
-            <span className="text-[#9AA3B2]">{COPY.unmarked}</span>
-          )}
+          ) : null}
         </div>
       </TooltipTrigger>
       <TooltipContent>
@@ -395,9 +393,7 @@ function DesktopRow({
         <TableCell className="whitespace-normal">
           {labels.en && labels.zh && row.bargaining_power ? (
             <TagBadge tag={row.bargaining_power} en={labels.en} zh={labels.zh} />
-          ) : (
-            <span className="text-[#9AA3B2]">{COPY.unmarked}</span>
-          )}
+          ) : null}
         </TableCell>
       </TooltipTrigger>
       <TooltipContent>

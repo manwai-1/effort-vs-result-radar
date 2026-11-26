@@ -14,15 +14,9 @@ export function leaderboardKind(
   market: "all" | Market,
   tags: TagKey[],
 ): LeaderboardKind {
-  if (tags.length === 0) return "tags-off"
-  const visible = points.some(
-    (point) =>
-      point.is_anomaly &&
-      (market === "all" || point.market === market) &&
-      point.bargaining_power !== null &&
-      tags.includes(point.bargaining_power),
-  )
+  const visible = points.some((point) => anomalyInLeaderboard(point, market, tags))
   if (visible) return "rows"
+  if (tags.length === 0) return "tags-off"
   if (points.some((point) => point.is_anomaly)) return "filtered-out"
   return "no-anomalies"
 }
@@ -49,11 +43,9 @@ export function anomalyInLeaderboard(
   market: "all" | Market,
   tags: TagKey[],
 ): boolean {
-  return (
-    tags.length > 0 &&
-    point.is_anomaly &&
-    (market === "all" || point.market === market) &&
-    point.bargaining_power !== null &&
-    tags.includes(point.bargaining_power)
-  )
+  if (!point.is_anomaly) return false
+  if (market !== "all" && point.market !== market) return false
+  // A missing tag is not a tag filter. The row stays with its market.
+  if (point.bargaining_power === null) return true
+  return tags.includes(point.bargaining_power)
 }

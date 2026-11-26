@@ -66,8 +66,9 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
-      className={cn("min-w-0 outline-none", className)}
+      className={cn("min-w-0", className)}
       {...props}
+      tabIndex={-1}
     />
   )
 }
