@@ -2,7 +2,12 @@
 
 Deterministic US and Hong Kong scanner for high-volume, low-displacement sessions. Python and yfinance write static JSON. Routine scans do not call an AI model.
 
-The data contract, formulas, session clock, and publish gate are in [API_SPEC.md](API_SPEC.md). There is no web UI in this repository.
+The data contract, formulas, session clock, and publish gate are in [API_SPEC.md](API_SPEC.md). The product UI is a Next.js app in this repository. It reads the two static JSON files and does not call a live API.
+
+```bash
+npm ci
+npm run dev
+```
 
 ```bash
 python -m pip install -r requirements-dev.txt

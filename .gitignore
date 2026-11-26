@@ -6,3 +6,9 @@ venv/
 .env
 *.tmp
 .DS_Store
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts

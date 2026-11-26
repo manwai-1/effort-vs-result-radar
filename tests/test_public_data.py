@@ -23,12 +23,13 @@ def test_committed_data_files_are_labeled_empty_fixtures():
     assert history["summary_by_tag"][2]["t_plus_3"]["hit_rate_pct"] is None
 
 
-def test_repository_has_no_ui_files():
-    root = Path(".")
+def test_scanner_package_stays_free_of_ui_files():
+    """The product UI lives outside the scanner. This guard stays on the Python package."""
     banned = {".html", ".css", ".tsx", ".jsx"}
     found = [
         path
-        for path in root.rglob("*")
-        if path.suffix in banned and ".git" not in path.parts and ".venv" not in path.parts
+        for path in Path("scanner").rglob("*")
+        if path.suffix in banned
     ]
     assert found == []
+    assert Path("app/page.tsx").is_file()
