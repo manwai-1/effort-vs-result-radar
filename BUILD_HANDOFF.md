@@ -2,9 +2,10 @@
 
 ## Pull request
 
-- PR: opened from this branch and stacked on scanner PR #1
+- PR: https://github.com/manwai-1/effort-vs-result-radar/pull/2
 - Branch: `cursor/product-ui-7260`
-- Head SHA: recorded after the tip commit
+- Product commit: `f9cd47bee5e2baaffbafd7e40afd875af1456131`
+- Head SHA: the tip of `cursor/product-ui-7260` after this handoff update
 - Starting SHA: `f1121faaf55cb2d71b0f20156f9489ae43b2aad9`
 - Scanner PR: https://github.com/manwai-1/effort-vs-result-radar/pull/1
 - Base of that PR: `main` at `41f6ac5a5f540fd6fc35c2266612fefbf9d63ae1`
