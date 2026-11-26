@@ -1,0 +1,1298 @@
+{
+  "snapshot_note": "Dated constituent snapshot for the scanner. Membership only; index weights are not stored and are not used. This file is not a live index feed and not a performance record.",
+  "retrieved_on": "2026-11-26",
+  "yahoo_symbol_rule": "ticker is the symbol the scanner writes and the symbol passed to yfinance. Hong Kong listing codes are zero-padded to 4 digits with a .HK suffix.",
+  "sources": [
+    {
+      "index": "Nasdaq-100",
+      "market": "US",
+      "as_of": "2026-11-02",
+      "component_count": 101,
+      "citation": "Nasdaq, Nasdaq-100 UCITS weights page, data as of 11/02/2026. Both Alphabet share classes (GOOGL and GOOG) are listed. Names are the truncated labels printed on that page.",
+      "url": "https://www.nasdaq.com/docs/global-indexes/NDX",
+      "cross_check": "Nasdaq XNDX overview reported 101 components as of 11/25/2026 (https://indexes.nasdaq.com/Index/Overview/XNDX). Xtrackers Nasdaq 100 UCITS ETF (IE00BMFKG444) holdings as of 2026-11-25, as tabulated by whichindex.com, match this security set except the ETF shows one Alphabet line (GOOGL) rather than both share classes. Both share classes are kept because the Nasdaq page lists both.",
+      "cross_check_url": "https://whichindex.com/indexes/nasdaq-100/"
+    },
+    {
+      "index": "Hang Seng Index",
+      "market": "HK",
+      "as_of": "2026-11-20",
+      "component_count": 95,
+      "citation": "Hang Seng Indexes Company, Index Review Results, 20 November 2026. Hang Seng Index adds: Nil. Removes: Nil. Constituents remain 95. The security list is Appendix 1 (constituent list assuming the rebalancing had taken place on 18 November 2026). Weight changes take effect 7 December 2026; membership does not change.",
+      "url": "https://www.hsi.com.hk/content/dam/wpb/hsil/en_hk/press_releases/content/20261120T174500.pdf"
+    }
+  ],
+  "symbols": [
+    {
+      "ticker": "AAPL",
+      "market": "US",
+      "name": "APPLE INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ABNB",
+      "market": "US",
+      "name": "AIRBNB, INC CL A CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ADBE",
+      "market": "US",
+      "name": "ADOBE INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ADI",
+      "market": "US",
+      "name": "ANALOG DEVICES CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ADP",
+      "market": "US",
+      "name": "AUTOMATIC DATA PROCS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ADSK",
+      "market": "US",
+      "name": "AUTODESK INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "AEP",
+      "market": "US",
+      "name": "AMER ELC PWR CO CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ALAB",
+      "market": "US",
+      "name": "ASTERA LABS, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ALNY",
+      "market": "US",
+      "name": "ALNYLAM PHARMACEUT",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "AMAT",
+      "market": "US",
+      "name": "APPLIED MATERIALS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "AMD",
+      "market": "US",
+      "name": "ADV MICRO DEVICES",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "AMGN",
+      "market": "US",
+      "name": "AMGEN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "AMZN",
+      "market": "US",
+      "name": "AMAZON.COM INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "APP",
+      "market": "US",
+      "name": "APPLOVIN CORP CLA CM",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ARM",
+      "market": "US",
+      "name": "ARM HOLDINGS PLC ADS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ASML",
+      "market": "US",
+      "name": "ASML HLDG NY REG",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "AVGO",
+      "market": "US",
+      "name": "BROADCOM INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "AXON",
+      "market": "US",
+      "name": "AXON ENTERPRISE, INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "BKNG",
+      "market": "US",
+      "name": "BOOKING HOLDINGS INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "BKR",
+      "market": "US",
+      "name": "BAKER HUGHES CO",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CCEP",
+      "market": "US",
+      "name": "COCA - COLA EUROPACIFI",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CDNS",
+      "market": "US",
+      "name": "CADENCE DESIGN SYS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CEG",
+      "market": "US",
+      "name": "CONSTELLATION EN CM",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CMCSA",
+      "market": "US",
+      "name": "COMCAST CORP A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "COST",
+      "market": "US",
+      "name": "COSTCO WHOLESALE",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CPRT",
+      "market": "US",
+      "name": "COPART, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CRWD",
+      "market": "US",
+      "name": "CROWDSTRIKE HLD CM A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CRWV",
+      "market": "US",
+      "name": "COREWEAVE CL A CS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CSCO",
+      "market": "US",
+      "name": "CISCO SYSTEMS INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CSX",
+      "market": "US",
+      "name": "CSX CORPORATION",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "CTAS",
+      "market": "US",
+      "name": "CINTAS CORP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "DASH",
+      "market": "US",
+      "name": "DOORDASH, INC CL A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "DDOG",
+      "market": "US",
+      "name": "DATADOG INC.L A CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "DXCM",
+      "market": "US",
+      "name": "DEXCOM",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "EXC",
+      "market": "US",
+      "name": "EXELON CORP CMN STK",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "FANG",
+      "market": "US",
+      "name": "DIAMONDBACK ENERGY",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "FAST",
+      "market": "US",
+      "name": "FASTENAL CO",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "FER",
+      "market": "US",
+      "name": "FERROVIAL N.V. OS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "FTNT",
+      "market": "US",
+      "name": "FORTINET, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "GEHC",
+      "market": "US",
+      "name": "GE HEALTHCARE CM",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "GILD",
+      "market": "US",
+      "name": "GILEAD SCIENCES, INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "GOOG",
+      "market": "US",
+      "name": "ALPHABET CL C CAP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "GOOGL",
+      "market": "US",
+      "name": "ALPHABET CL A CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "HON",
+      "market": "US",
+      "name": "HONEYWELL INTL INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "HONA",
+      "market": "US",
+      "name": "HNYWLL AEROSPACE",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "IDXX",
+      "market": "US",
+      "name": "IDEXX LABORATORIES",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "INTC",
+      "market": "US",
+      "name": "INTEL CORP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "INTU",
+      "market": "US",
+      "name": "INTUIT INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ISRG",
+      "market": "US",
+      "name": "INTUITIVE SURG, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "KDP",
+      "market": "US",
+      "name": "KEURIG DR PEPPER INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "KLAC",
+      "market": "US",
+      "name": "KLA CP CMN STK",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "LIN",
+      "market": "US",
+      "name": "LINDE PLC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "LITE",
+      "market": "US",
+      "name": "LUMENTUM HLD CM",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "LRCX",
+      "market": "US",
+      "name": "LAM RESEARCH CORP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MAR",
+      "market": "US",
+      "name": "MARRIOTT INT CL A CM",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MCHP",
+      "market": "US",
+      "name": "MICROCHIP TECHNOLOGY",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MDLZ",
+      "market": "US",
+      "name": "MONDELEZ INTL CMN A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MELI",
+      "market": "US",
+      "name": "MERCADOLIBRE, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "META",
+      "market": "US",
+      "name": "META PLATFORMS, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MNST",
+      "market": "US",
+      "name": "MONSTER BEVERAGE CP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MPWR",
+      "market": "US",
+      "name": "MONOLITHIC POWER SYS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MRNA",
+      "market": "US",
+      "name": "MODERNA INC CS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MRVL",
+      "market": "US",
+      "name": "MARVELL TECH INC CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MSFT",
+      "market": "US",
+      "name": "MICROSOFT CORP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MSTR",
+      "market": "US",
+      "name": "STRATEGY INC CL A CS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "MU",
+      "market": "US",
+      "name": "MICRON TECHNOLOGY",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "NBIS",
+      "market": "US",
+      "name": "NEBIUS GRP NV ORD A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "NFLX",
+      "market": "US",
+      "name": "NETFLIX, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "NVDA",
+      "market": "US",
+      "name": "NVIDIA CORPORATION",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "NXPI",
+      "market": "US",
+      "name": "NXP SEMICONDUCTORS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ODFL",
+      "market": "US",
+      "name": "OLD DOMINION FREIG",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ORLY",
+      "market": "US",
+      "name": "O'REILLY AUTOMOTIVE",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "PANW",
+      "market": "US",
+      "name": "PALO ALTO NTWKS CM",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "PAYX",
+      "market": "US",
+      "name": "PAYCHEX, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "PCAR",
+      "market": "US",
+      "name": "PACCAR INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "PDD",
+      "market": "US",
+      "name": "PDD HOLDINGS INC ADS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "PEP",
+      "market": "US",
+      "name": "PEPSICO INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "PLTR",
+      "market": "US",
+      "name": "PALANTIR TECH CL A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "PYPL",
+      "market": "US",
+      "name": "PAYPAL HOLDINGS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "QCOM",
+      "market": "US",
+      "name": "QUALCOMM INC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "REGN",
+      "market": "US",
+      "name": "REGENERON PHARMACEUT",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "RKLB",
+      "market": "US",
+      "name": "ROCKET LAB CORP CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ROP",
+      "market": "US",
+      "name": "ROPER TECH CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "ROST",
+      "market": "US",
+      "name": "ROSS STORES, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "SBUX",
+      "market": "US",
+      "name": "STARBUCKS CORP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "SHOP",
+      "market": "US",
+      "name": "SHOPIFY INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "SNDK",
+      "market": "US",
+      "name": "SANDISK CP CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "SNPS",
+      "market": "US",
+      "name": "SYNOPSYS, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "SPCX",
+      "market": "US",
+      "name": "SPACE EXPL TCH CMN A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "STX",
+      "market": "US",
+      "name": "SEAGATE TCH HLDGS OR",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "TER",
+      "market": "US",
+      "name": "TERADYNE INC CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "TMUS",
+      "market": "US",
+      "name": "T - MOBILE US CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "TRI",
+      "market": "US",
+      "name": "THOMSON REUTERS CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "TSLA",
+      "market": "US",
+      "name": "TESLA, INC.",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "TTWO",
+      "market": "US",
+      "name": "TAKE - TWO INTERACTI",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "TXN",
+      "market": "US",
+      "name": "TEXAS INSTRUMENTS",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "VRTX",
+      "market": "US",
+      "name": "VERTEX PHARMACEUTIC",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "WDAY",
+      "market": "US",
+      "name": "WORKDAY INC CL A",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "WDC",
+      "market": "US",
+      "name": "WESTERN DIGITAL CP",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "WMT",
+      "market": "US",
+      "name": "WALMART INC CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "XEL",
+      "market": "US",
+      "name": "XCEL ENERGY CMN",
+      "index": "Nasdaq-100"
+    },
+    {
+      "ticker": "0001.HK",
+      "market": "HK",
+      "name": "CKH HOLDINGS",
+      "index": "Hang Seng Index",
+      "source_code": "1"
+    },
+    {
+      "ticker": "0002.HK",
+      "market": "HK",
+      "name": "CLP HOLDINGS",
+      "index": "Hang Seng Index",
+      "source_code": "2"
+    },
+    {
+      "ticker": "0003.HK",
+      "market": "HK",
+      "name": "HK & CHINA GAS",
+      "index": "Hang Seng Index",
+      "source_code": "3"
+    },
+    {
+      "ticker": "0005.HK",
+      "market": "HK",
+      "name": "HSBC HOLDINGS",
+      "index": "Hang Seng Index",
+      "source_code": "5"
+    },
+    {
+      "ticker": "0006.HK",
+      "market": "HK",
+      "name": "POWER ASSETS",
+      "index": "Hang Seng Index",
+      "source_code": "6"
+    },
+    {
+      "ticker": "0012.HK",
+      "market": "HK",
+      "name": "HENDERSON LAND",
+      "index": "Hang Seng Index",
+      "source_code": "12"
+    },
+    {
+      "ticker": "0016.HK",
+      "market": "HK",
+      "name": "SHK PPT",
+      "index": "Hang Seng Index",
+      "source_code": "16"
+    },
+    {
+      "ticker": "0027.HK",
+      "market": "HK",
+      "name": "GALAXY ENT",
+      "index": "Hang Seng Index",
+      "source_code": "27"
+    },
+    {
+      "ticker": "0066.HK",
+      "market": "HK",
+      "name": "MTR CORPORATION",
+      "index": "Hang Seng Index",
+      "source_code": "66"
+    },
+    {
+      "ticker": "0101.HK",
+      "market": "HK",
+      "name": "HANG LUNG PPT",
+      "index": "Hang Seng Index",
+      "source_code": "101"
+    },
+    {
+      "ticker": "0175.HK",
+      "market": "HK",
+      "name": "GEELY AUTO",
+      "index": "Hang Seng Index",
+      "source_code": "175"
+    },
+    {
+      "ticker": "0241.HK",
+      "market": "HK",
+      "name": "ALI HEALTH",
+      "index": "Hang Seng Index",
+      "source_code": "241"
+    },
+    {
+      "ticker": "0267.HK",
+      "market": "HK",
+      "name": "CITIC",
+      "index": "Hang Seng Index",
+      "source_code": "267"
+    },
+    {
+      "ticker": "0285.HK",
+      "market": "HK",
+      "name": "BYD ELECTRONIC",
+      "index": "Hang Seng Index",
+      "source_code": "285"
+    },
+    {
+      "ticker": "0288.HK",
+      "market": "HK",
+      "name": "WH GROUP",
+      "index": "Hang Seng Index",
+      "source_code": "288"
+    },
+    {
+      "ticker": "0291.HK",
+      "market": "HK",
+      "name": "CHINA RES BEER",
+      "index": "Hang Seng Index",
+      "source_code": "291"
+    },
+    {
+      "ticker": "0300.HK",
+      "market": "HK",
+      "name": "MIDEA GROUP (H)",
+      "index": "Hang Seng Index",
+      "source_code": "300"
+    },
+    {
+      "ticker": "0316.HK",
+      "market": "HK",
+      "name": "OOIL",
+      "index": "Hang Seng Index",
+      "source_code": "316"
+    },
+    {
+      "ticker": "0322.HK",
+      "market": "HK",
+      "name": "TINGYI",
+      "index": "Hang Seng Index",
+      "source_code": "322"
+    },
+    {
+      "ticker": "0386.HK",
+      "market": "HK",
+      "name": "SINOPEC CORP (H)",
+      "index": "Hang Seng Index",
+      "source_code": "386"
+    },
+    {
+      "ticker": "0388.HK",
+      "market": "HK",
+      "name": "HKEX",
+      "index": "Hang Seng Index",
+      "source_code": "388"
+    },
+    {
+      "ticker": "0669.HK",
+      "market": "HK",
+      "name": "TECHTRONIC IND",
+      "index": "Hang Seng Index",
+      "source_code": "669"
+    },
+    {
+      "ticker": "0688.HK",
+      "market": "HK",
+      "name": "CHINA OVERSEAS",
+      "index": "Hang Seng Index",
+      "source_code": "688"
+    },
+    {
+      "ticker": "0700.HK",
+      "market": "HK",
+      "name": "TENCENT",
+      "index": "Hang Seng Index",
+      "source_code": "700"
+    },
+    {
+      "ticker": "0728.HK",
+      "market": "HK",
+      "name": "CHINA TELECOM (H)",
+      "index": "Hang Seng Index",
+      "source_code": "728"
+    },
+    {
+      "ticker": "0762.HK",
+      "market": "HK",
+      "name": "CHINA UNICOM",
+      "index": "Hang Seng Index",
+      "source_code": "762"
+    },
+    {
+      "ticker": "0823.HK",
+      "market": "HK",
+      "name": "LINK REIT",
+      "index": "Hang Seng Index",
+      "source_code": "823"
+    },
+    {
+      "ticker": "0836.HK",
+      "market": "HK",
+      "name": "CHINA RES POWER",
+      "index": "Hang Seng Index",
+      "source_code": "836"
+    },
+    {
+      "ticker": "0857.HK",
+      "market": "HK",
+      "name": "PETROCHINA (H)",
+      "index": "Hang Seng Index",
+      "source_code": "857"
+    },
+    {
+      "ticker": "0868.HK",
+      "market": "HK",
+      "name": "XINYI GLASS",
+      "index": "Hang Seng Index",
+      "source_code": "868"
+    },
+    {
+      "ticker": "0883.HK",
+      "market": "HK",
+      "name": "CNOOC",
+      "index": "Hang Seng Index",
+      "source_code": "883"
+    },
+    {
+      "ticker": "0939.HK",
+      "market": "HK",
+      "name": "CCB (H)",
+      "index": "Hang Seng Index",
+      "source_code": "939"
+    },
+    {
+      "ticker": "0941.HK",
+      "market": "HK",
+      "name": "CHINA MOBILE",
+      "index": "Hang Seng Index",
+      "source_code": "941"
+    },
+    {
+      "ticker": "0960.HK",
+      "market": "HK",
+      "name": "LONGFOR GROUP",
+      "index": "Hang Seng Index",
+      "source_code": "960"
+    },
+    {
+      "ticker": "0968.HK",
+      "market": "HK",
+      "name": "XINYI SOLAR",
+      "index": "Hang Seng Index",
+      "source_code": "968"
+    },
+    {
+      "ticker": "0981.HK",
+      "market": "HK",
+      "name": "SMIC",
+      "index": "Hang Seng Index",
+      "source_code": "981"
+    },
+    {
+      "ticker": "0992.HK",
+      "market": "HK",
+      "name": "LENOVO GROUP",
+      "index": "Hang Seng Index",
+      "source_code": "992"
+    },
+    {
+      "ticker": "1024.HK",
+      "market": "HK",
+      "name": "KUAISHOU - W",
+      "index": "Hang Seng Index",
+      "source_code": "1024"
+    },
+    {
+      "ticker": "1038.HK",
+      "market": "HK",
+      "name": "CKI HOLDINGS",
+      "index": "Hang Seng Index",
+      "source_code": "1038"
+    },
+    {
+      "ticker": "1044.HK",
+      "market": "HK",
+      "name": "HENGAN INT'L",
+      "index": "Hang Seng Index",
+      "source_code": "1044"
+    },
+    {
+      "ticker": "1088.HK",
+      "market": "HK",
+      "name": "CHINA SHENHUA (H)",
+      "index": "Hang Seng Index",
+      "source_code": "1088"
+    },
+    {
+      "ticker": "1093.HK",
+      "market": "HK",
+      "name": "CSPC PHARMA",
+      "index": "Hang Seng Index",
+      "source_code": "1093"
+    },
+    {
+      "ticker": "1099.HK",
+      "market": "HK",
+      "name": "SINOPHARM (H)",
+      "index": "Hang Seng Index",
+      "source_code": "1099"
+    },
+    {
+      "ticker": "1109.HK",
+      "market": "HK",
+      "name": "CHINA RES LAND",
+      "index": "Hang Seng Index",
+      "source_code": "1109"
+    },
+    {
+      "ticker": "1113.HK",
+      "market": "HK",
+      "name": "CK ASSET",
+      "index": "Hang Seng Index",
+      "source_code": "1113"
+    },
+    {
+      "ticker": "1177.HK",
+      "market": "HK",
+      "name": "SBP GROUP",
+      "index": "Hang Seng Index",
+      "source_code": "1177"
+    },
+    {
+      "ticker": "1209.HK",
+      "market": "HK",
+      "name": "CHINA RES MIXC",
+      "index": "Hang Seng Index",
+      "source_code": "1209"
+    },
+    {
+      "ticker": "1211.HK",
+      "market": "HK",
+      "name": "BYD COMPANY (H)",
+      "index": "Hang Seng Index",
+      "source_code": "1211"
+    },
+    {
+      "ticker": "1299.HK",
+      "market": "HK",
+      "name": "AIA",
+      "index": "Hang Seng Index",
+      "source_code": "1299"
+    },
+    {
+      "ticker": "1347.HK",
+      "market": "HK",
+      "name": "HUA HONG GRACE",
+      "index": "Hang Seng Index",
+      "source_code": "1347"
+    },
+    {
+      "ticker": "1378.HK",
+      "market": "HK",
+      "name": "CHINAHONGQIAO",
+      "index": "Hang Seng Index",
+      "source_code": "1378"
+    },
+    {
+      "ticker": "1398.HK",
+      "market": "HK",
+      "name": "ICBC (H)",
+      "index": "Hang Seng Index",
+      "source_code": "1398"
+    },
+    {
+      "ticker": "1519.HK",
+      "market": "HK",
+      "name": "J&T EXPRESS - W",
+      "index": "Hang Seng Index",
+      "source_code": "1519"
+    },
+    {
+      "ticker": "1801.HK",
+      "market": "HK",
+      "name": "INNOVENT BIO",
+      "index": "Hang Seng Index",
+      "source_code": "1801"
+    },
+    {
+      "ticker": "1810.HK",
+      "market": "HK",
+      "name": "XIAOMI - W",
+      "index": "Hang Seng Index",
+      "source_code": "1810"
+    },
+    {
+      "ticker": "1876.HK",
+      "market": "HK",
+      "name": "BUD APAC",
+      "index": "Hang Seng Index",
+      "source_code": "1876"
+    },
+    {
+      "ticker": "1928.HK",
+      "market": "HK",
+      "name": "SANDS CHINA LTD",
+      "index": "Hang Seng Index",
+      "source_code": "1928"
+    },
+    {
+      "ticker": "1929.HK",
+      "market": "HK",
+      "name": "CHOW TAI FOOK",
+      "index": "Hang Seng Index",
+      "source_code": "1929"
+    },
+    {
+      "ticker": "1997.HK",
+      "market": "HK",
+      "name": "WHARF REIC",
+      "index": "Hang Seng Index",
+      "source_code": "1997"
+    },
+    {
+      "ticker": "2015.HK",
+      "market": "HK",
+      "name": "LI AUTO - W",
+      "index": "Hang Seng Index",
+      "source_code": "2015"
+    },
+    {
+      "ticker": "2020.HK",
+      "market": "HK",
+      "name": "ANTA SPORTS",
+      "index": "Hang Seng Index",
+      "source_code": "2020"
+    },
+    {
+      "ticker": "2057.HK",
+      "market": "HK",
+      "name": "ZTO EXPRESS - W",
+      "index": "Hang Seng Index",
+      "source_code": "2057"
+    },
+    {
+      "ticker": "2269.HK",
+      "market": "HK",
+      "name": "WUXI BIO",
+      "index": "Hang Seng Index",
+      "source_code": "2269"
+    },
+    {
+      "ticker": "2313.HK",
+      "market": "HK",
+      "name": "SHENZHOU INTL",
+      "index": "Hang Seng Index",
+      "source_code": "2313"
+    },
+    {
+      "ticker": "2318.HK",
+      "market": "HK",
+      "name": "PING AN (H)",
+      "index": "Hang Seng Index",
+      "source_code": "2318"
+    },
+    {
+      "ticker": "2319.HK",
+      "market": "HK",
+      "name": "MENGNIU DAIRY",
+      "index": "Hang Seng Index",
+      "source_code": "2319"
+    },
+    {
+      "ticker": "2331.HK",
+      "market": "HK",
+      "name": "LI NING",
+      "index": "Hang Seng Index",
+      "source_code": "2331"
+    },
+    {
+      "ticker": "2338.HK",
+      "market": "HK",
+      "name": "WEICHAI POWER (H)",
+      "index": "Hang Seng Index",
+      "source_code": "2338"
+    },
+    {
+      "ticker": "2359.HK",
+      "market": "HK",
+      "name": "WUXI APPTEC (H)",
+      "index": "Hang Seng Index",
+      "source_code": "2359"
+    },
+    {
+      "ticker": "2382.HK",
+      "market": "HK",
+      "name": "SUNNY OPTICAL",
+      "index": "Hang Seng Index",
+      "source_code": "2382"
+    },
+    {
+      "ticker": "2388.HK",
+      "market": "HK",
+      "name": "BOC HONG KONG",
+      "index": "Hang Seng Index",
+      "source_code": "2388"
+    },
+    {
+      "ticker": "2600.HK",
+      "market": "HK",
+      "name": "CHALCO (H)",
+      "index": "Hang Seng Index",
+      "source_code": "2600"
+    },
+    {
+      "ticker": "2618.HK",
+      "market": "HK",
+      "name": "JD LOGISTICS",
+      "index": "Hang Seng Index",
+      "source_code": "2618"
+    },
+    {
+      "ticker": "2628.HK",
+      "market": "HK",
+      "name": "CHINA LIFE (H)",
+      "index": "Hang Seng Index",
+      "source_code": "2628"
+    },
+    {
+      "ticker": "2688.HK",
+      "market": "HK",
+      "name": "ENN ENERGY",
+      "index": "Hang Seng Index",
+      "source_code": "2688"
+    },
+    {
+      "ticker": "2899.HK",
+      "market": "HK",
+      "name": "ZIJIN MINING (H)",
+      "index": "Hang Seng Index",
+      "source_code": "2899"
+    },
+    {
+      "ticker": "3690.HK",
+      "market": "HK",
+      "name": "MEITUAN - W",
+      "index": "Hang Seng Index",
+      "source_code": "3690"
+    },
+    {
+      "ticker": "3692.HK",
+      "market": "HK",
+      "name": "HANSOH PHARMA",
+      "index": "Hang Seng Index",
+      "source_code": "3692"
+    },
+    {
+      "ticker": "3750.HK",
+      "market": "HK",
+      "name": "CATL (H)",
+      "index": "Hang Seng Index",
+      "source_code": "3750"
+    },
+    {
+      "ticker": "3968.HK",
+      "market": "HK",
+      "name": "CM BANK (H)",
+      "index": "Hang Seng Index",
+      "source_code": "3968"
+    },
+    {
+      "ticker": "3988.HK",
+      "market": "HK",
+      "name": "BANK OF CHINA (H)",
+      "index": "Hang Seng Index",
+      "source_code": "3988"
+    },
+    {
+      "ticker": "3993.HK",
+      "market": "HK",
+      "name": "CMOC (H)",
+      "index": "Hang Seng Index",
+      "source_code": "3993"
+    },
+    {
+      "ticker": "6160.HK",
+      "market": "HK",
+      "name": "BEONE MEDICINES",
+      "index": "Hang Seng Index",
+      "source_code": "6160"
+    },
+    {
+      "ticker": "6181.HK",
+      "market": "HK",
+      "name": "LAOPU GOLD (H)",
+      "index": "Hang Seng Index",
+      "source_code": "6181"
+    },
+    {
+      "ticker": "6618.HK",
+      "market": "HK",
+      "name": "JD HEALTH",
+      "index": "Hang Seng Index",
+      "source_code": "6618"
+    },
+    {
+      "ticker": "6690.HK",
+      "market": "HK",
+      "name": "HAIER SMARTHOME (H)",
+      "index": "Hang Seng Index",
+      "source_code": "6690"
+    },
+    {
+      "ticker": "6862.HK",
+      "market": "HK",
+      "name": "HAIDILAO",
+      "index": "Hang Seng Index",
+      "source_code": "6862"
+    },
+    {
+      "ticker": "9618.HK",
+      "market": "HK",
+      "name": "JD - SW",
+      "index": "Hang Seng Index",
+      "source_code": "9618"
+    },
+    {
+      "ticker": "9633.HK",
+      "market": "HK",
+      "name": "NONGFU SPRING (H)",
+      "index": "Hang Seng Index",
+      "source_code": "9633"
+    },
+    {
+      "ticker": "9888.HK",
+      "market": "HK",
+      "name": "BIDU - W",
+      "index": "Hang Seng Index",
+      "source_code": "9888"
+    },
+    {
+      "ticker": "9901.HK",
+      "market": "HK",
+      "name": "NEW ORIENTAL - S",
+      "index": "Hang Seng Index",
+      "source_code": "9901"
+    },
+    {
+      "ticker": "9961.HK",
+      "market": "HK",
+      "name": "TRIP.COM - S",
+      "index": "Hang Seng Index",
+      "source_code": "9961"
+    },
+    {
+      "ticker": "9988.HK",
+      "market": "HK",
+      "name": "BABA - W",
+      "index": "Hang Seng Index",
+      "source_code": "9988"
+    },
+    {
+      "ticker": "9992.HK",
+      "market": "HK",
+      "name": "POP MART",
+      "index": "Hang Seng Index",
+      "source_code": "9992"
+    },
+    {
+      "ticker": "9999.HK",
+      "market": "HK",
+      "name": "NTES",
+      "index": "Hang Seng Index",
+      "source_code": "9999"
+    }
+  ]
+}

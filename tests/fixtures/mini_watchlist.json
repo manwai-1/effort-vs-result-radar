@@ -1,0 +1,20 @@
+{
+  "note": "Synthetic fixture universe for local runs and tests. Not the Nasdaq-100 or the Hang Seng Index.",
+  "symbols": [
+    {
+      "ticker": "FIXU",
+      "market": "US",
+      "name": "Fixture US anomaly"
+    },
+    {
+      "ticker": "FIXN",
+      "market": "US",
+      "name": "Fixture US normal"
+    },
+    {
+      "ticker": "FIXH.HK",
+      "market": "HK",
+      "name": "Fixture HK normal"
+    }
+  ]
+}
