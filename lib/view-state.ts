@@ -14,9 +14,9 @@ export function leaderboardKind(
   market: "all" | Market,
   tags: TagKey[],
 ): LeaderboardKind {
+  if (tags.length === 0) return "tags-off"
   const visible = points.some((point) => anomalyInLeaderboard(point, market, tags))
   if (visible) return "rows"
-  if (tags.length === 0) return "tags-off"
   if (points.some((point) => point.is_anomaly)) return "filtered-out"
   return "no-anomalies"
 }
@@ -45,7 +45,8 @@ export function anomalyInLeaderboard(
 ): boolean {
   if (!point.is_anomaly) return false
   if (market !== "all" && point.market !== market) return false
-  // A missing tag is not a tag filter. The row stays with its market.
+  // DESIGN.md §11.2: every tag off is the zero-tag empty state, including null-tag anomalies.
+  if (tags.length === 0) return false
   if (point.bargaining_power === null) return true
   return tags.includes(point.bargaining_power)
 }

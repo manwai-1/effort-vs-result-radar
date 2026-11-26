@@ -6,7 +6,8 @@
 - Branch: `cursor/product-ui-7260`
 - Product commit: `f9cd47bee5e2baaffbafd7e40afd875af1456131`
 - Vetoed SHA: `43939add450407b50e5fddc40098f1d9a2afc781`
-- Head SHA: the tip of `cursor/product-ui-7260` that contains this fix-round section
+- Fix-round-1 SHA: `e837e4f143dee7a91bc2305a029cc65a8b3a1c3e`
+- Head SHA: the tip of `cursor/product-ui-7260` that contains this fix-round 2 section
 - Starting SHA: `f1121faaf55cb2d71b0f20156f9489ae43b2aad9`
 - Scanner PR: https://github.com/manwai-1/effort-vs-result-radar/pull/1
 - Base of that PR: `main` at `41f6ac5a5f540fd6fc35c2266612fefbf9d63ae1`
@@ -150,5 +151,47 @@ Screenshots:
 - `/opt/cursor/artifacts/evr-qa/fix1/record-390.png`
 - `/opt/cursor/artifacts/evr-qa/fix1/focus-chart-1440.png`
 - `/opt/cursor/artifacts/evr-qa/fix1/dialog-1440.png`
+
+This round is a candidate for a fresh audit. It is not a STATUS: PASS and it is not permission to merge.
+
+## Fix round 2
+
+Independent QA vetoed `e837e4f143dee7a91bc2305a029cc65a8b3a1c3e` for QA-3. QA-1 and QA-2 stay closed. Scanner SHA `f1121faaf55cb2d71b0f20156f9489ae43b2aad9` was still the tip of PR #1 and was not moved.
+
+When every tag toggle is off, Live Radar and Track Record both show `請至少選擇一項議價狀態。` and list no rows, including a null-tag anomaly. While at least one tag stays selected, a null-tag anomaly remains on the market-filtered leaderboard and is not labelled `未標記`. Scatter glyphs stay tied to `is_anomaly`.
+
+### Commands on this round
+
+| Command | Result |
+| --- | --- |
+| `npm test` | 14 passed |
+| `npm run lint` | passed |
+| `npm run build` | passed |
+| `python3 -m pytest` | 37 passed |
+
+### Browser
+
+`http://127.0.0.1:3000` from `next start --hostname 127.0.0.1 --port 3000`. Loopback only. Device scale 1. No page errors. No images. Color classes were not changed.
+
+| Check | Viewport | Result |
+| --- | --- | --- |
+| Empty Live Radar | 1440×1000 and 390×844 | `scrollWidth` equals `clientWidth`. Last scan is `最近掃描：時間未有提供`. No `1970`. No 72-hour notice. |
+| All tags off, NULLTAG fixture, Live Radar and Track Record | 1440×1100 and 390×844 | Both views show `請至少選擇一項議價狀態。` and do not list `NULLTAG`. `scrollWidth` equals `clientWidth`. `NULLTAG` and `0005.HK` stay `r=4`, fill `#E8B849`, stroke `#12161C`, stroke width 1. |
+| One tag still selected | 1440×1100 and 390×844 | `NULLTAG` is on the leaderboard. Its name omits `未標記`. Glyph stays the accent anomaly. |
+| Seller Distribution off | 1440×1100 | `0005.HK` leaves the leaderboard and keeps the accent glyph. `NULLTAG` stays listed. |
+| Tab order | 1440×1000 | `重新整理`, `計算方法`, `全部`, first tag, `Live Radar`, then the chart div. Each control stop has the accent ring. Tab panel and Recharts svg are `tabindex="-1"`. |
+
+Screenshots:
+
+- `/opt/cursor/artifacts/evr-qa/fix2/tags-off-radar-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/tags-off-record-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/tags-off-radar-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/tags-off-record-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/one-tag-ready-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/one-tag-ready-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/seller-off-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/empty-1440.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/empty-390.png`
+- `/opt/cursor/artifacts/evr-qa/fix2/focus-chart-1440.png`
 
 This round is a candidate for a fresh audit. It is not a STATUS: PASS and it is not permission to merge.

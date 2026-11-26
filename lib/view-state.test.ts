@@ -34,14 +34,17 @@ test("tag filters drop tagged leaderboard rows and keep null-tag anomalies", () 
   const nullTag: FilterPoint = { market: "US", is_anomaly: true, bargaining_power: null }
   const plain: FilterPoint = { market: "US", is_anomaly: false, bargaining_power: null }
   assert.equal(anomalyInLeaderboard(nullTag, "all", [...allTags]), true)
-  assert.equal(anomalyInLeaderboard(nullTag, "all", []), true)
+  assert.equal(anomalyInLeaderboard(nullTag, "all", ["buyer_absorption"]), true)
+  assert.equal(anomalyInLeaderboard(nullTag, "all", []), false)
   assert.equal(anomalyInLeaderboard(seller, "all", [...allTags]), true)
   assert.equal(
     anomalyInLeaderboard(seller, "all", ["buyer_absorption", "stalemate_compression"]),
     false,
   )
+  assert.equal(anomalyInLeaderboard(seller, "all", []), false)
   assert.equal(anomalyInLeaderboard(plain, "all", [...allTags]), false)
-  assert.equal(leaderboardKind([seller, nullTag], "all", []), "rows")
+  assert.equal(leaderboardKind([seller, nullTag], "all", []), "tags-off")
+  assert.equal(leaderboardKind([seller, nullTag], "all", ["buyer_absorption"]), "rows")
   assert.equal(leaderboardKind([seller], "all", []), "tags-off")
 })
 
