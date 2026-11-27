@@ -1,0 +1,10 @@
+{
+  "data_status": "empty_fixture",
+  "data_status_note": "Committed placeholder so the path exists. Not a live scan and not performance. A real scanner run replaces this file and does not copy data_status.",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "universe": {
+    "us_count": 0,
+    "hk_count": 0
+  },
+  "points": []
+}
