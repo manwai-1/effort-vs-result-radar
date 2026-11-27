@@ -1,0 +1,89 @@
+{
+  "data_status": "empty_fixture",
+  "data_status_note": "Committed empty ledger. Not live performance. summary_by_tag is the zero-sample shape from the scanner rules. A real scanner run replaces this file and does not copy data_status.",
+  "updated_at": "1970-01-01T00:00:00+00:00",
+  "records": [],
+  "summary_by_tag": [
+    {
+      "bargaining_power": "buyer_absorption",
+      "bargaining_power_label_en": "Buyer Absorption",
+      "bargaining_power_label_zh": "買方暗中承接",
+      "sample_count": 0,
+      "t_plus_3": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": true,
+        "hit_rate_label": null
+      },
+      "t_plus_5": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": true,
+        "hit_rate_label": null
+      },
+      "t_plus_10": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": true,
+        "hit_rate_label": null
+      }
+    },
+    {
+      "bargaining_power": "seller_distribution",
+      "bargaining_power_label_en": "Seller Distribution",
+      "bargaining_power_label_zh": "賣方暗中出貨",
+      "sample_count": 0,
+      "t_plus_3": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": true,
+        "hit_rate_label": null
+      },
+      "t_plus_5": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": true,
+        "hit_rate_label": null
+      },
+      "t_plus_10": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": true,
+        "hit_rate_label": null
+      }
+    },
+    {
+      "bargaining_power": "stalemate_compression",
+      "bargaining_power_label_en": "Stalemate / Compression",
+      "bargaining_power_label_zh": "多空角力壓縮",
+      "sample_count": 0,
+      "t_plus_3": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": false,
+        "hit_rate_label": "不適用"
+      },
+      "t_plus_5": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": false,
+        "hit_rate_label": "不適用"
+      },
+      "t_plus_10": {
+        "sample_count": 0,
+        "average_return_pct": null,
+        "hit_rate_pct": null,
+        "hit_rate_applicable": false,
+        "hit_rate_label": "不適用"
+      }
+    }
+  ]
+}

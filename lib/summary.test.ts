@@ -5,6 +5,8 @@ import { parseHistory, parseRadar } from "./parse"
 import { cardsForFilters, summarize } from "./summary"
 import type { HistoryRecord, TagKey } from "./types"
 
+const OFFSET_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/
+
 function row(
   tag: TagKey,
   returns: [number | null, number | null, number | null],
@@ -64,7 +66,7 @@ test("an empty horizon average is null rather than zero", () => {
 })
 
 test("unfiltered cards use summary_by_tag and a narrowed market recomputes", () => {
-  const history = parseHistory(JSON.parse(readFileSync("public/data/history_results.json", "utf8")))
+  const history = parseHistory(JSON.parse(readFileSync("tests/fixtures/empty_history.json", "utf8")))
   assert.ok(history)
   const cards = cardsForFilters({
     records: history.records,
@@ -86,8 +88,8 @@ test("unfiltered cards use summary_by_tag and a narrowed market recomputes", () 
   assert.equal(narrowed.find((card) => card.bargaining_power === "buyer_absorption")?.t_plus_3.average_return_pct, 4)
 })
 
-test("the committed radar fixture parses as an empty fixture", () => {
-  const radar = parseRadar(JSON.parse(readFileSync("public/data/radar.json", "utf8")))
+test("an empty radar fixture parses as an empty fixture", () => {
+  const radar = parseRadar(JSON.parse(readFileSync("tests/fixtures/empty_radar.json", "utf8")))
   assert.equal(radar?.data_status, "empty_fixture")
   assert.equal(radar?.points.length, 0)
   assert.equal(
@@ -110,4 +112,19 @@ test("the committed radar fixture parses as an empty fixture", () => {
     }),
     null,
   )
+})
+
+test("committed public data parses as a live scan", () => {
+  const radarRaw = JSON.parse(readFileSync("public/data/radar.json", "utf8"))
+  const historyRaw = JSON.parse(readFileSync("public/data/history_results.json", "utf8"))
+  const radar = parseRadar(radarRaw)
+  const history = parseHistory(historyRaw)
+  assert.ok(radar)
+  assert.ok(history)
+  assert.equal(Object.hasOwn(radarRaw, "data_status"), false)
+  assert.equal(Object.hasOwn(historyRaw, "data_status"), false)
+  assert.equal(radar.data_status, undefined)
+  assert.equal(history.data_status, undefined)
+  assert.match(radar.generated_at ?? "", OFFSET_TIMESTAMP)
+  assert.match(history.updated_at ?? "", OFFSET_TIMESTAMP)
 })

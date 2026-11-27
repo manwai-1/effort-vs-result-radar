@@ -139,7 +139,7 @@ The scanner does not retag a row from an earlier session. A same-day partial row
 
 Writes are atomic (`*.tmp` then replace). A document that fails validation is not written. Numbers are JSON numbers. Chinese labels are raw UTF-8, not `\u` escapes.
 
-Live scanner output does **not** include `data_status`. The files committed under `public/data/` are empty fixtures (`data_status: "empty_fixture"`) so a checkout is not mistaken for a live scan or for performance. The loader treats an empty fixture with zero records as an empty ledger. It refuses a fixture file that already contains records.
+Live scanner output does **not** include `data_status`. A `--push` run may commit that live output under `public/data/`. On a real scan, `data_status` is omitted, `radar.json` `generated_at` is an ISO-8601 timestamp with an offset at second precision, and both documents match the schema in this section. Tests do not require those committed files to stay empty. Empty-fixture behavior (`data_status: "empty_fixture"`, empty `points` and `records`) is covered by `tests/fixtures/empty_radar.json` and `tests/fixtures/empty_history.json`. The loader treats an empty fixture with zero records as an empty ledger. It refuses a fixture file that already contains records.
 
 ### 5.1 `public/data/radar.json`
 
@@ -336,7 +336,7 @@ python -m scanner \
 
 A `--bars` run that targets `public/data/radar.json` or `public/data/history_results.json` is refused (exit 2) before those files are opened for writing. Fixture numbers stay out of the committed ledger.
 
-CI (`.github/workflows/ci.yml`) runs `python -m pytest` on pull requests and on pushes to `main`. It does not download market data. The fixture path is tested with yfinance patched to fail if called.
+CI (`.github/workflows/ci.yml`) runs `python -m pytest` and, in the `web` job, `npm run lint`, `npm test`, and `npm run build` on pull requests and on pushes to `main`. It does not download market data. The fixture path is tested with yfinance patched to fail if called. Empty-fixture assertions read `tests/fixtures/empty_radar.json` and `tests/fixtures/empty_history.json`. A later `--push` commit that replaces `public/data/*.json` with live scanner output (no `data_status`, valid schema, valid `generated_at` or `updated_at`) does not fail these tests.
 
 The scan workflow (`.github/workflows/scan.yml`) is `schedule` plus `workflow_dispatch` only. It installs `requirements.txt` (no pytest) and runs the scanner with `--push`.
 
@@ -344,5 +344,5 @@ The scan workflow (`.github/workflows/scan.yml`) is `schedule` plus `workflow_di
 
 - No HTML, CSS, Tailwind, React, Next.js, or other UI.
 - No Vercel project, no deploy, no repository-setting changes.
-- No live performance numbers in git. `public/data/*.json` is an empty labeled fixture until a real Actions run replaces it.
+- No CI failure when `--push` replaces `public/data/*.json` with live scanner output. That output omits `data_status`. Empty-fixture coverage stays in `tests/fixtures/empty_radar.json` and `tests/fixtures/empty_history.json`.
 - No currency conversion, no in-app threshold editor, and no browser recalculation of RVOL or tags.
