@@ -63,8 +63,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--scheduled",
         action="store_true",
         help=(
-            "Scheduled GitHub Actions run. When both regular sessions are closed, "
-            "do not rewrite radar.json. Backfill completed T+N returns only."
+            "Scheduled GitHub Actions run. An open market refreshes the live radar "
+            "from the partial daily bar. A market in its post-close window "
+            "(16:20 local until the local date changes) is a full scan of that "
+            "completed session: radar.json is rewritten with the official close "
+            "and full-day volume, and only that market's same-day ledger rows are "
+            "finalized. When neither is true, do not rewrite radar.json. "
+            "Backfill completed T+N returns only."
         ),
     )
     parser.add_argument(

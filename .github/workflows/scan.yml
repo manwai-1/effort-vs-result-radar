@@ -1,16 +1,25 @@
-# UTC cron is a superset of US regular hours across EST and EDT plus Hong Kong
-# regular hours, weekdays only. America/New_York daylight saving is not encoded
-# as a fixed UTC offset: scanner/hours.py decides whether a market is open.
+# UTC cron is a weekday superset of Hong Kong regular hours, US regular hours
+# in both EST and EDT, and a 16:20 local post-close scan for each market.
+# America/New_York daylight saving is not a fixed UTC offset: scanner/hours.py
+# decides whether a market is open or inside its post-close window.
+# Hong Kong has no DST. 16:20 Asia/Hong_Kong is 08:20 UTC.
+# 16:20 America/New_York is 20:20 UTC during EDT and 21:20 UTC during EST.
+# The other season's slot still fires; the Python clock does not treat
+# 15:20 EST as post-close (that slot is still the regular session).
 # Hong Kong lunch (12:00–13:00 Asia/Hong_Kong, 04:00 and 04:30 UTC) is included.
-# The 16:00 local close is outside the open interval, so it is not scheduled.
+# 16:00 local is the close and is not itself a scheduled capture. The capture
+# of the official close and full-day volume is the 16:20 local run.
 name: scan
 
 on:
   schedule:
     - cron: "30 1 * * 1-5" # 09:30 Asia/Hong_Kong
     - cron: "*/30 2-7 * * 1-5" # 10:00–15:30 Asia/Hong_Kong, including lunch
+    - cron: "20 8 * * 1-5" # 16:20 Asia/Hong_Kong (08:20 UTC, no DST)
     - cron: "30 13 * * 1-5" # 09:30 America/New_York during EDT; 08:30 during EST
     - cron: "*/30 14-20 * * 1-5" # through 15:30 local, both EST and EDT
+    - cron: "20 20 * * 1-5" # 16:20 America/New_York during EDT; 15:20 during EST
+    - cron: "20 21 * * 1-5" # 16:20 America/New_York during EST; 17:20 during EDT
   workflow_dispatch:
 
 permissions:

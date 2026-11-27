@@ -8,11 +8,18 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 from scanner.fetch import FixtureSource, YFinanceSource, load_fixture_bars
-from scanner.hours import market_local, open_markets
+from scanner.hours import (
+    is_regular_session,
+    market_local,
+    open_markets,
+    post_close_markets,
+    session_date_is_complete,
+)
 from scanner.ledger import (
     append_anomalies,
     apply_backfill,
     build_history_document,
+    finalize_completed_session,
     history_fetch_start,
 )
 from scanner.models import ScanError
@@ -65,6 +72,93 @@ def _reject_fixture_write_into_committed_data(config: RunConfig) -> None:
             )
 
 
+def _ledger_plan(now: datetime, scheduled: bool) -> tuple[set[str], set[str]]:
+    """Return (finalize_markets, append_markets).
+
+    Scheduled runs finalize only a market inside its own post-close window,
+    and append only a market whose regular session is open. A market that is
+    neither contributes no new flag. Manual runs finalize every market that
+    is not in its regular session, because the measurement bar is then a
+    completed session, and they append only while a session is open.
+    """
+
+    if scheduled:
+        finalize = set(post_close_markets(now))
+        append = set(open_markets(now)) - finalize
+        return finalize, append
+    finalize = {market for market in ("US", "HK") if not is_regular_session(now, market)}
+    append = {market for market in ("US", "HK") if market not in finalize}
+    return finalize, append
+
+
+def _measured_sessions(
+    symbols: list[dict],
+    dates: dict[str, str],
+    now: datetime,
+    market: str,
+    *,
+    scheduled: bool,
+) -> list[tuple[str, set[str]]]:
+    """Session dates to finalize for one market, with the tickers measured on each."""
+
+    symbol_market = {symbol["ticker"]: symbol["market"] for symbol in symbols}
+    if scheduled:
+        session_date = market_local(now, market).date().isoformat()
+        measured = {
+            ticker
+            for ticker, session in dates.items()
+            if symbol_market.get(ticker) == market and session == session_date
+        }
+        return [(session_date, measured)]
+    grouped: dict[str, set[str]] = {}
+    for ticker, session in dates.items():
+        if symbol_market.get(ticker) != market:
+            continue
+        if not session_date_is_complete(now, market, date.fromisoformat(session)):
+            continue
+        grouped.setdefault(session, set()).add(ticker)
+    return list(grouped.items())
+
+
+def _apply_ledger(
+    records: list,
+    symbols: list[dict],
+    points: list[dict],
+    dates: dict[str, str],
+    now: datetime,
+    scheduled: bool,
+) -> tuple[int, int, int, int]:
+    """Apply intraday append and post-close finalization. Return counts.
+
+    The counts are (appended, replaced, added_on_finalize, removed).
+    """
+
+    anomalies = anomalies_from_points(points, dates)
+    finalize_markets, append_markets = _ledger_plan(now, scheduled)
+    replaced = 0
+    added = 0
+    removed = 0
+    for market in ("US", "HK"):
+        if market not in finalize_markets:
+            continue
+        for session_date, measured in _measured_sessions(symbols, dates, now, market, scheduled=scheduled):
+            rep, add, rem = finalize_completed_session(
+                records,
+                anomalies,
+                measured,
+                market,
+                session_date,
+            )
+            replaced += rep
+            added += add
+            removed += rem
+    appended = append_anomalies(
+        records,
+        [row for row in anomalies if row["market"] in append_markets],
+    )
+    return appended, replaced, added, removed
+
+
 def run(config: RunConfig) -> int:
     if config.now.tzinfo is None or config.now.utcoffset() is None:
         raise ScanError("--now must be timezone-aware (ISO-8601 with an offset)", 2)
@@ -74,8 +168,9 @@ def run(config: RunConfig) -> int:
 
     symbols = load_watchlist(config.watchlist_path)
     markets = open_markets(config.now)
+    closing = post_close_markets(config.now)
     records = load_history_records(config.history_path)
-    backfill_only = config.scheduled and not markets
+    backfill_only = config.scheduled and not markets and not closing
 
     if backfill_only:
         pending = [
@@ -87,8 +182,9 @@ def run(config: RunConfig) -> int:
         ]
         if not pending:
             print(
-                "scheduled run: both US and HK regular sessions are closed; "
-                "no pending T+N returns; radar.json and history_results.json unchanged"
+                "scheduled run: no regular session is open and no market is in its "
+                "post-close window; no pending T+N returns; "
+                "radar.json and history_results.json unchanged"
             )
             return 0
         source = _source(config)
@@ -97,15 +193,17 @@ def run(config: RunConfig) -> int:
         filled = apply_backfill(records, bars, config.now)
         if filled == 0:
             print(
-                "scheduled run: both markets closed; backfill checked real bars and "
-                "found no completed T+N session to write; files unchanged"
+                "scheduled run: no regular session is open and no market is in its "
+                "post-close window; backfill checked real bars and found no "
+                "completed T+N session to write; files unchanged"
             )
             return 0
         document = build_history_document(records, config.now)
         validate_history(document)
         dump_json(document, config.history_path)
         print(
-            f"scheduled run: both markets closed; radar.json unchanged; "
+            "scheduled run: no regular session is open and no market is in its "
+            f"post-close window; radar.json unchanged; "
             f"backfilled {filled} ledger row(s) from completed sessions"
         )
         _maybe_publish(config)
@@ -125,17 +223,32 @@ def run(config: RunConfig) -> int:
     radar = build_radar(points, config.now)
     validate_radar(radar)
     dates = measurement_dates(symbols, bars, config.now)
-    added = append_anomalies(records, anomalies_from_points(points, dates))
+    appended, replaced, added, removed = _apply_ledger(
+        records,
+        symbols,
+        points,
+        dates,
+        config.now,
+        config.scheduled,
+    )
     filled = apply_backfill(records, bars, config.now)
     history = build_history_document(records, config.now)
     validate_history(history)
     dump_json(radar, config.radar_path)
     dump_json(history, config.history_path)
-    open_label = ",".join(markets) if markets else "none (manual run; latest real bars)"
+    if markets:
+        open_label = ",".join(markets)
+    elif config.scheduled:
+        open_label = "none"
+    else:
+        open_label = "none (manual run; latest real bars)"
+    close_label = ",".join(closing) if closing else "none"
     print(
         f"scan wrote {len(points)} points "
         f"({radar['universe']['us_count']} US, {radar['universe']['hk_count']} HK); "
-        f"open={open_label}; new ledger rows={added}; backfilled rows={filled}; "
+        f"open={open_label}; post_close={close_label}; "
+        f"new ledger rows={appended + added}; finalized rows={replaced}; "
+        f"removed partial rows={removed}; backfilled rows={filled}; "
         f"skipped={len(skipped)}"
     )
     _maybe_publish(config)

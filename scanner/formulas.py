@@ -2,10 +2,15 @@
 
 Definitions (also stated in API_SPEC.md):
 
-- The measurement session is the latest daily bar on or before the market's
-  local calendar date. While that session is still inside regular hours the
-  bar may be partial (the current yfinance daily bar). It is still the
-  measurement session. It is never copied forward to invent a missing day.
+- The measurement session is the latest daily bar on or before the
+  session-date ceiling. From the local 09:30 open onward, the ceiling is the
+  market's local date. Before the open it is the previous calendar date, so
+  a bar dated today is not used as a price for a session that has not
+  started. While that session is still inside regular hours the bar may be
+  partial (the current yfinance daily bar). From the post-close window the
+  same date is the completed session: its close is the official close and
+  its volume is the full-day volume. The bar is never copied forward to
+  invent a missing day.
 - Baseline sessions are the daily bars strictly before the measurement
   session. The measurement bar is excluded from the average volume, the ATR,
   and the trend.

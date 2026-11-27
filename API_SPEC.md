@@ -37,8 +37,8 @@ The committed file is a membership snapshot, not a live index feed and not a wei
 | Invocation | Behavior |
 | --- | --- |
 | `python -m scanner` | Full scan at the current clock. Live yfinance bars. Writes both JSON files when at least one point can be measured. |
-| `python -m scanner --scheduled` | Used by the cron workflow. If neither regular session is open, do not rewrite `radar.json`. Backfill completed T+N returns only, and only rewrite `history_results.json` when a null return becomes a number. |
-| `workflow_dispatch` | The workflow runs `python -m scanner --push` without `--scheduled`. Full scan of the latest real bars even when both markets are closed. It does not synthesize a session. |
+| `python -m scanner --scheduled` | Used by the cron workflow. A market in its regular session refreshes the live radar from that session's partial daily bar. A market in its post-close window is a full scan of the session that just completed: `radar.json` is rewritten with the official close and full-day volume, and only that market's same-day ledger rows are finalized (§2, §5.2). When neither a regular session nor a post-close window is open, do not rewrite `radar.json`. Backfill completed T+N returns only, and only rewrite `history_results.json` when a null return becomes a number. |
+| `workflow_dispatch` | The workflow runs `python -m scanner --push` without `--scheduled`. Full scan of the latest real bars even when both markets are closed. It does not synthesize a session. A measurement session that is already complete is finalized the same way as a post-close run (§5.2). A session that is still open keeps the intraday first-flag rule. |
 | `--bars FILE --now TIMESTAMP` | Fixture mode. No yfinance import and no network. `--now` is ISO-8601 and must include an offset (`Z` is accepted as `+00:00`). |
 | `--push` | After a successful write, commit and `git push` the two JSON files. See §6. |
 
@@ -71,18 +71,29 @@ A market is in its regular session when the local weekday is Monday–Friday and
 
 Hong Kong lunch (12:00–13:00) is inside that window. Lunch prints are the vendor's last traded prices, not invented prices. One clock covers 09:30–16:00. The cron fires through lunch on purpose.
 
-A session dated today is **completed** when the local clock is at or after 16:00. A session dated before the market's local date is completed. The 16:00 minute is therefore closed for scheduling and complete for T+N backfill.
+A session dated today is **completed** when the local clock is at or after 16:00. A session dated before the market's local date is completed. The 16:00 minute is therefore complete for T+N backfill. It is not, by itself, the post-close scan.
 
-The workflow cron is UTC and is only a superset so that both EST and EDT are covered:
+**Post-close window.** A market is in its post-close window on a Monday–Friday when the local time is **at or after 16:20**, until that local date changes. The 16:20 scheduled run is a full scan of the session that just completed. It rewrites `radar.json` with that session's official close and full-day volume. It is not a closed-market no-op, and it does not leave the 15:30 partial bar in place. A later scheduled run that is still on that local date and at or after 16:20 finalizes the same session, so a delayed 16:20 job still writes the completed bar. After the local date changes, the session is no longer just-completed.
+
+Each market is judged on its own clock. Finalizing one market does not depend on the other market being open or closed.
+
+- A US 16:20 America/New_York run finalizes US names. At that moment Hong Kong is already on the next local date (early morning, not in session). HK names are not finalized and no HK price is invented for a session that has not started.
+- An HK 16:20 Asia/Hong_Kong run finalizes HK names. At that moment the US session has not opened (03:20 EST or 04:20 EDT). US names are not finalized. A US bar dated today is not the measurement bar, because the ceiling is still the previous date (§3).
+- The two sessions do not overlap at 16:20, but a later same-date run can see one market still inside its post-close window while the other market is open. Hong Kong's next morning is still the previous evening in New York, and a Hong Kong evening after 21:30 during US daylight-saving time is still that Hong Kong date while New York is in its regular session. Only the market inside the post-close window is finalized. The open market may refresh the live radar from its partial daily bar. Its same-day ledger row, if one was already appended, is not replaced.
+
+The workflow cron is UTC, weekdays only, and is a superset so that both EST and EDT are covered, including both 16:20 slots. `workflow_dispatch` stays available.
 
 | Cron (UTC, weekdays) | Why it is there |
 | --- | --- |
 | `30 1 * * 1-5` | 09:30 Asia/Hong_Kong |
 | `*/30 2-7 * * 1-5` | 10:00–15:30 Asia/Hong_Kong, including 12:00 and 12:30 lunch |
+| `20 8 * * 1-5` | 16:20 Asia/Hong_Kong. HKT has no DST, so 16:20 HKT is 08:20 UTC |
 | `30 13 * * 1-5` | 09:30 America/New_York during EDT; 08:30 during EST (the job no-ops that market in winter) |
-| `*/30 14-20 * * 1-5` | Through 15:30 local in both EST and EDT |
+| `*/30 14-20 * * 1-5` | Through 15:30 local in both EST and EDT. 20:30 UTC is 16:30 EDT, which is inside the US post-close window, and 15:30 EST, which is still the regular session |
+| `20 20 * * 1-5` | 16:20 America/New_York during EDT (20:20 UTC). During EST this is 15:20, still the regular session. The Python clock does not treat it as post-close |
+| `20 21 * * 1-5` | 16:20 America/New_York during EST (21:20 UTC). During EDT this is 17:20, still the same local date after 16:20, so that completed US session is finalized |
 
-The Python clock is authoritative. A cron slot that falls outside the local session does not invent prices. GitHub may delay a scheduled run. Scheduled workflows run only from the default branch after this workflow is on that branch.
+The Python clock is authoritative. A cron slot that is not an open session and not a post-close window does not invent prices and does not rewrite `radar.json`. GitHub may delay a scheduled run. A delay that is still inside the post-close window still finalizes that market. Scheduled workflows run only from the default branch after this workflow is on that branch.
 
 Exchange holidays are not hard-coded. If the clock says a market is open but the vendor has no bar for that local date, the scanner uses the latest real bar on or before that date. It does not create a bar.
 
@@ -90,7 +101,7 @@ Exchange holidays are not hard-coded. If the clock says a market is open but the
 
 All of these are deterministic.
 
-**Measurement session.** The latest daily bar whose session date is on or before the market's local date. While that session is still before 16:00 local, the bar may be partial (today's yfinance daily bar). It is still the measurement session. Baseline bars are strictly earlier. The measurement bar is excluded from average volume, ATR, and the trend.
+**Measurement session.** The latest daily bar whose session date is on or before the session-date ceiling. From the local 09:30 open onward, including the post-close window, the ceiling is the market's local date. Before the local open on a weekday, the ceiling is the previous calendar date, so a bar dated today is not measured and is not used as a price for a session that has not started. While that session is still before 16:00 local, the bar may be partial (today's yfinance daily bar). It is still the measurement session for an intraday refresh. From 16:20 local the scheduled run treats that same session date as the completed session: the bar's close is the official close and its volume is the full-day volume. Baseline bars are strictly earlier. The measurement bar is excluded from average volume, ATR, and the trend. The scanner does not create a bar when the vendor has none.
 
 **Minimum history.** 21 baseline bars plus the measurement bar (22 sessions). Fewer than that, a non-positive average volume, a non-positive ATR, or a non-positive close: skip the ticker. Do not emit a point and do not invent a metric.
 
@@ -122,7 +133,7 @@ Assigned only when `is_anomaly` is true. Otherwise `bargaining_power`, `bargaini
 | `up` | `seller_distribution` | Seller Distribution | 賣方暗中出貨 |
 | `sideways` | `stalemate_compression` | Stalemate / Compression | 多空角力壓縮 |
 
-The scanner does not retag a row in a later pass. The first ledger row keeps its tag.
+The scanner does not retag a row from an earlier session. A same-day partial row is retagged when that market's post-close finalization replaces it with the completed session (§5.2). After that replacement, the tag stays.
 
 ## 5. Outputs
 
@@ -132,7 +143,7 @@ Live scanner output does **not** include `data_status`. The files committed unde
 
 ### 5.1 `public/data/radar.json`
 
-Replaced on every full scan. Not rewritten on a scheduled run while both markets are closed.
+Replaced on every full scan. A full scan is a manual run, `workflow_dispatch`, a scheduled run with at least one market in its regular session, or a scheduled run with at least one market in its post-close window. The 16:20 post-close run rewrites this file with the just-completed session's official close and full-day volume. It does not leave the previous intraday file, including a 15:30 partial bar, in place. Points for the other market come from that market's latest real bar on or before its own ceiling. A scheduled run that finds neither an open session nor a post-close window does not rewrite this file.
 
 | Field | Type |
 | --- | --- |
@@ -160,7 +171,7 @@ Each point:
 | `last_price` | number. This scanner always supplies it. Rounded measurement close, 4 decimal places |
 | `currency` | `"USD"` for US, `"HKD"` for HK. Always supplied. No FX conversion |
 
-`generated_at` moves only when a full scan writes a new file. A closed-market scheduled run does not refresh it.
+`generated_at` moves when a full scan writes a new file, including the 16:20 post-close scan. A scheduled run outside an open session and outside every post-close window does not refresh it.
 
 ### 5.2 `public/data/history_results.json`
 
@@ -172,7 +183,18 @@ Append-only ledger of daily anomalies, plus a full recompute of `summary_by_tag`
 | `records` | Array. Existing order is kept. Rows added in one run are sorted by date, market, ticker |
 | `summary_by_tag` | Array of exactly three objects, in the order buyer absorption, seller distribution, stalemate |
 
-Dedup key: `date` + `ticker`. The first flag for that pair is kept. Later scans do not overwrite `signal_price`, RVOL, displacement, score, tag, or labels. A later scan the same day that is no longer an anomaly does not delete the row.
+Dedup key: `date` + `ticker`. One row per pair.
+
+**Intraday, while that market's session is still open.** The first row for the pair is kept. A later intraday scan does not overwrite `signal_price`, RVOL, displacement, score, tag, or labels. A later intraday scan that no longer sees an anomaly does not delete the row. A new anomaly may be appended. That row is the partial bar. It is not the finalized record. The live radar may still refresh from the partial daily bar.
+
+**Post-close finalization.** This runs for a market inside its post-close window on a scheduled run, and for a manual or `workflow_dispatch` run whose measurement session is already complete (the market is not in its regular session). It applies only to that market and only to the completed session date. The other market is left alone, whether it is still open, already closed, or not yet open.
+
+- If the completed session is an anomaly and a same-day row already exists, replace `signal_price`, RVOL, displacement, anomaly score, bargaining-power tag, and both labels with the completed-session values. `signal_price` is the official close. RVOL uses the full-day volume over the prior 20 sessions, excluding that bar. Displacement, score, and tag use the same formulas as an intraday point. An earlier partial bar must not remain as those stored fields. A filled T+N return on that row is not cleared and is not revised.
+- If the completed session is an anomaly and no same-day row exists, append the row. A name that was not an anomaly on the partial bar can still be flagged once the full day is known.
+- If the completed session is not an anomaly and a same-day row exists, remove that row. A partial bar must not lock a flag, a price, an RVOL, a displacement, a score, or a tag that the completed session does not confirm. Rows for other dates are not removed.
+- A ticker with no real bar on the completed session date is not finalized and is not deleted. The scanner does not invent that price.
+
+A later session does not overwrite a finalized row, except that a still-null T+N return can be filled. `summary_by_tag` is recomputed whenever the file is written, so a replacement or a removal updates the cards.
 
 Each record:
 
@@ -181,9 +203,9 @@ Each record:
 | `date` | `YYYY-MM-DD`, the measurement session's date in that market |
 | `ticker` | string |
 | `market` | `"US"` or `"HK"` |
-| `signal_price` | number, the measurement close at the first flag |
+| `signal_price` | number, the measurement close recorded for that session. An intraday row may still hold the partial close. The post-close run replaces it with the official close |
 | `currency` | `"USD"` or `"HKD"` |
-| `rvol`, `displacement`, `anomaly_score` | numbers from that first flag |
+| `rvol`, `displacement`, `anomaly_score` | numbers from the intraday row until the post-close run replaces them with the completed session. RVOL then uses the full-day volume |
 | `bargaining_power` | one of the three keys. Never null on a ledger row |
 | `bargaining_power_label_en` | contract English label |
 | `bargaining_power_label_zh` | contract Traditional Chinese label |
@@ -199,9 +221,9 @@ Returns are percentage points: `1.25` means +1.25%. `0` means a flat return, not
 
 Downloads use yfinance `auto_adjust=False` and the unadjusted `Close` column. `Adj Close` is ignored. `repair` is off. A split between the signal and T+N can distort the percentage. This MVP does not invent a split adjustment.
 
-**Scheduled run, both markets closed.** No new ledger rows (that would be a fresh flag, and the radar is not being refreshed). Existing null returns are filled from completed bars. If no return changes, the file is left untouched, including `updated_at`.
+**Scheduled run, no open session and no post-close window.** No new ledger rows and no same-day replacement (that would be a fresh flag, and the radar is not being refreshed). Existing null returns are filled from completed bars. If no return changes, the file is left untouched, including `updated_at`. A 16:00 local slot is this case. A 16:20 local slot is not.
 
-**Full scan (manual, workflow_dispatch, or at least one market open).** New anomalies for each ticker's measurement session may be appended, and null returns may be filled. Both files are written.
+**Full scan (manual, workflow_dispatch, at least one market open, or at least one market in its post-close window).** `radar.json` is rewritten from the latest real bars. Ledger rows follow the intraday rule for an open market and the post-close rule for a market being finalized. Null returns may be filled. Both files are written. A post-close run still writes `radar.json` when the ledger row count does not change, because the official close replaces the partial bar.
 
 ### 5.3 `summary_by_tag`
 
@@ -262,7 +284,7 @@ The scanner validates both documents before replacing them. Validation checks re
 
 | Exit | When | Files |
 | --- | --- | --- |
-| 0 | Scan written, or an honest no-op (both markets closed and nothing to backfill, or backfill found no completed session) | Unchanged on a no-op |
+| 0 | Scan written, or an honest no-op (scheduled run with no open session and no post-close window, and nothing to backfill, or backfill found no completed session) | Unchanged on a no-op |
 | 2 | Watchlist, fixture, clock, or existing history failed validation | Unchanged |
 | 3 | Live download produced no usable bars, or every ticker was skipped | Unchanged. A partial outage that still yields some points writes those points and skips the rest |
 | 4 | `--push` refused, or git commit/push failed | A refused `--push` does not write. A git failure after a successful write leaves the local JSON in place and does not force-push |
@@ -296,6 +318,18 @@ python -m scanner \
   --now 2026-11-27T15:00:00-05:00 \
   --radar /tmp/evr-radar.json \
   --history /tmp/evr-history.json
+```
+
+Scheduled post-close scan of the same fixture (16:20 America/New_York). This rewrites the radar with the completed session instead of taking the closed-market backfill path. The fixture bars are synthetic. They are not live prices.
+
+```bash
+python -m scanner \
+  --watchlist tests/fixtures/mini_watchlist.json \
+  --bars tests/fixtures/mini_bars.json \
+  --now 2026-11-27T16:20:00-05:00 \
+  --scheduled \
+  --radar /tmp/evr-radar-postclose.json \
+  --history /tmp/evr-history-postclose.json
 ```
 
 `python` is `python3` on images that do not install the `python` alias. GitHub Actions uses `python` from `actions/setup-python` 3.12.
